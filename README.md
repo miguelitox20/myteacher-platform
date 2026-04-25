@@ -4,7 +4,7 @@
 
 ## 🔗 Enlaces del Proyecto
 * **Repositorio GitHub:** [https://github.com/miguelitox20/myteacher-platform](https://github.com/miguelitox20/myteacher-platform)
-* **Demo en vivo (Vercel/Railway):** [https://tu-proyecto.vercel.app](https://tu-proyecto.vercel.app)
+* **Demo en vivo (Vercel/Railway):myteacher-platform.vercel.app
 
 ---
 
