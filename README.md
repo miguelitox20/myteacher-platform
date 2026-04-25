@@ -3,7 +3,7 @@
 **MyTeacher** es una aplicación web interactiva diseñada para conectar a estudiantes con profesores particulares de diversas áreas (Matemáticas, Inglés, Programación, etc.). La plataforma permite explorar perfiles, filtrar resultados por precio o materia, y simular el proceso completo de reserva de una clase.
 
 ## 🔗 Enlaces del Proyecto
-* **Repositorio GitHub:** [[https://github.com/miguelitox20/myteacher-platform](https://github.com/miguelitox20/myteacher-platform)](https://github.com/miguelitox20/myteacher-platform.git)
+* **Repositorio GitHub:https://github.com/miguelitox20/myteacher-platform.git
 * **Demo en vivo (Vercel/Railway):[myteacher-platform.vercel.app](https://myteacher-platform.vercel.app/)
 
 ---
