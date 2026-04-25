@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyTeacher — Aprende con los mejores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    My<span>Teacher</span>
+  </div>
+  <div class="nav-links" id="navLinks">
+    <span class="nav-link" onclick="showPage('search')">Explorar</span>
+    <span class="nav-link" onclick="showPage('home')">Cómo funciona</span>
+    <span class="nav-link" onclick="showPage('dashboard')">Mi Panel</span>
+  </div>
+  <div id="navRight">
+    <button class="btn btn-primary" onclick="showPage('search')">Buscar Profesor</button>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Mensaje</div>
+
+<!-- ===================== HOME ===================== -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">🚀 +1,200 profesores disponibles ahora</div>
+    <h1>Aprende con los mejores <em>profesores</em> cerca de ti</h1>
+    <p class="hero-sub">Conecta con tutores particulares al instante. Como pedir un taxi, pero para aprender.</p>
+
+    <div class="hero-search">
+      <input type="text" placeholder="¿Qué quieres aprender? Ej: Matemáticas, Inglés, Guitarra..." id="heroSearch">
+      <button class="btn btn-primary" onclick="doHeroSearch()">🔍 Buscar</button>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <strong>12K+</strong>
+        <span>Estudiantes activos</span>
+      </div>
+      <div class="hero-stat">
+        <strong>1.2K</strong>
+        <span>Profesores verificados</span>
+      </div>
+      <div class="hero-stat">
+        <strong>4.9★</strong>
+        <span>Calificación promedio</span>
+      </div>
+    </div>
+
+    <div class="hero-float avatar-colors">
+      <div class="float-card featured">
+        <div class="fc-label">Disponible ahora</div>
+        <div class="fc-val">Ana García</div>
+        <div class="stars">★★★★★</div>
+        <div style="font-size:13px;margin-top:6px;opacity:.8;">Matemáticas · $35/hr</div>
+      </div>
+      <div class="float-card">
+        <div class="fc-label">Sesiones hoy</div>
+        <div class="fc-val" style="color:var(--brand)">248</div>
+        <div class="fc-sub">en tiempo real</div>
+      </div>
+      <div class="float-card">
+        <div class="fc-label">Respuesta media</div>
+        <div class="fc-val" style="color:var(--brand)">4 min</div>
+        <div class="fc-sub">muy rápido</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="section">
+    <div class="section-label">Explora por área</div>
+    <h2>¿Qué quieres aprender hoy?</h2>
+    <div class="categories">
+      <div class="category-card" onclick="searchCategory('Matemáticas')">
+        <span class="category-icon">📐</span>
+        <div class="category-name">Matemáticas</div>
+        <div class="category-count">243 profesores</div>
+      </div>
+      <div class="category-card" onclick="searchCategory('Idiomas')">
+        <span class="category-icon">🌍</span>
+        <div class="category-name">Idiomas</div>
+        <div class="category-count">318 profesores</div>
+      </div>
+      <div class="category-card" onclick="searchCategory('Música')">
+        <span class="category-icon">🎸</span>
+        <div class="category-name">Música</div>
+        <div class="category-count">156 profesores</div>
+      </div>
+      <div class="category-card" onclick="searchCategory('Programación')">
+        <span class="category-icon">💻</span>
+        <div class="category-name">Programación</div>
+        <div class="category-count">189 profesores</div>
+      </div>
+      <div class="category-card" onclick="searchCategory('Ciencias')">
+        <span class="category-icon">🔬</span>
+        <div class="category-name">Ciencias</div>
+        <div class="category-count">211 profesores</div>
+      </div>
+      <div class="category-card" onclick="searchCategory('Arte')">
+        <span class="category-icon">🎨</span>
+        <div class="category-name">Arte</div>
+        <div class="category-count">94 profesores</div>
+      </div>
+      <div class="category-card" onclick="searchCategory('Deportes')">
+        <span class="category-icon">⚽</span>
+        <div class="category-name">Deportes</div>
+        <div class="category-count">78 profesores</div>
+      </div>
+      <div class="category-card" onclick="searchCategory('Historia')">
+        <span class="category-icon">📚</span>
+        <div class="category-name">Historia</div>
+        <div class="category-count">103 profesores</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="howto-bg">
+    <div class="section">
+      <div class="section-label">¿Cómo funciona?</div>
+      <h2 style="color:#fff">Tan fácil como pedir un Uber</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Busca tu materia</h3>
+          <p>Escribe lo que quieres aprender y filtra por precio, disponibilidad y valoración.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Elige tu profesor</h3>
+          <p>Revisa perfiles, calificaciones y comentarios de otros estudiantes.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Reserva tu clase</h3>
+          <p>Selecciona fecha, hora y modalidad (presencial o virtual). Pago seguro en línea.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h3>¡Aprende!</h3>
+          <p>Conéctate a tu clase y comienza a aprender. Califica tu experiencia al terminar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP TEACHERS -->
+  <div class="section">
+    <div class="section-label">Profesores destacados</div>
+    <h2>Los mejor valorados esta semana</h2>
+    <div class="teachers-grid" id="homeTeachersGrid"></div>
+  </div>
+
+  <footer>
+    <strong>MyTeacher</strong> · © 2025 · Tu plataforma de aprendizaje personalizado
+  </footer>
+</div>
+
+<!-- ===================== SEARCH ===================== -->
+<div class="page" id="page-search">
+  <div class="search-layout">
+    <!-- Sidebar -->
+    <aside class="filters-sidebar">
+      <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:1.5rem;">Filtros</div>
+
+      <div class="filter-section">
+        <div class="filter-title">Materia</div>
+        <div class="filter-option"><input type="checkbox" checked> Matemáticas</div>
+        <div class="filter-option"><input type="checkbox"> Idiomas</div>
+        <div class="filter-option"><input type="checkbox"> Ciencias</div>
+        <div class="filter-option"><input type="checkbox"> Música</div>
+        <div class="filter-option"><input type="checkbox"> Programación</div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">Precio por hora</div>
+        <input type="range" class="range-input" min="10" max="150" value="80" id="priceRange"
+          oninput="document.getElementById('priceVal').textContent='$'+this.value">
+        <div class="range-label">
+          <span>$10</span>
+          <span id="priceVal">$80</span>
+          <span>$150</span>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">Modalidad</div>
+        <div class="filter-option"><input type="checkbox" checked> En línea</div>
+        <div class="filter-option"><input type="checkbox"> Presencial</div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">Calificación</div>
+        <div class="filter-option"><input type="checkbox" checked> ★★★★★ (5 estrellas)</div>
+        <div class="filter-option"><input type="checkbox"> ★★★★ (4+ estrellas)</div>
+        <div class="filter-option"><input type="checkbox"> ★★★ (3+ estrellas)</div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">Disponibilidad</div>
+        <div class="filter-option"><input type="checkbox"> Disponible hoy</div>
+        <div class="filter-option"><input type="checkbox"> Esta semana</div>
+        <div class="filter-option"><input type="checkbox"> Fines de semana</div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;margin-top:.5rem;" onclick="applyFilters()">Aplicar Filtros</button>
+    </aside>
+
+    <!-- Results -->
+    <div>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="¿Qué quieres aprender?" value="Matemáticas">
+        <button class="btn btn-primary" onclick="applyFilters()">🔍 Buscar</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.5rem;" id="activeTags">
+        <span class="tag" style="cursor:pointer;">Matemáticas ✕</span>
+        <span class="tag" style="cursor:pointer;">En línea ✕</span>
+        <span class="tag" style="cursor:pointer;">★★★★★ ✕</span>
+      </div>
+      <div class="result-count"><strong id="resultCount">24</strong> profesores encontrados</div>
+      <div class="teachers-grid" id="searchGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PROFILE ===================== -->
+<div class="page" id="page-profile">
+  <div class="profile-layout">
+    <div style="margin-bottom:1rem;">
+      <button class="btn btn-ghost" onclick="showPage('search')" style="font-size:13px;">← Volver a resultados</button>
+    </div>
+
+    <div class="profile-header" id="profileHeader">
+      <!-- dynamically filled -->
+    </div>
+
+    <div class="profile-tabs">
+      <div class="profile-tab active" onclick="switchTab('about')">Sobre mí</div>
+      <div class="profile-tab" onclick="switchTab('reviews')">Reseñas (24)</div>
+      <div class="profile-tab" onclick="switchTab('schedule')">Horarios</div>
+    </div>
+
+    <div class="tab-content active" id="tab-about">
+      <div class="card-box" style="margin-bottom:1.5rem;">
+        <div class="card-box-title">Sobre el profesor</div>
+        <p id="profileBio" style="color:var(--text2);line-height:1.8;font-size:15px;"></p>
+      </div>
+      <div class="card-box" style="margin-bottom:1.5rem;">
+        <div class="card-box-title">Especialidades</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="profileSpecialties"></div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-reviews">
+      <div id="reviewsList"></div>
+    </div>
+
+    <div class="tab-content" id="tab-schedule">
+      <div class="card-box">
+        <div class="card-box-title">Disponibilidad — Mayo 2025</div>
+        <div id="scheduleCalendar"></div>
+        <p style="font-size:13px;color:var(--text3);margin-top:1rem;">
+          ✅ Días disponibles &nbsp;&nbsp; ❌ Sin disponibilidad &nbsp;&nbsp; Clic para reservar
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== BOOKING ===================== -->
+<div class="page" id="page-booking">
+  <div style="max-width:900px;margin:0 auto;padding:2rem;">
+    <div style="margin-bottom:1.5rem;">
+      <button class="btn btn-ghost" onclick="showPage('profile')" style="font-size:13px;">← Volver al perfil</button>
+    </div>
+    <div class="page-title">Reservar clase</div>
+    <div class="page-sub">Completa los detalles para confirmar tu sesión</div>
+  </div>
+  <div class="booking-layout">
+    <div class="booking-panel">
+      <h3 style="font-family:'Syne',sans-serif;font-size:1.1rem;margin-bottom:1.5rem;">Detalles de la clase</h3>
+
+      <div class="form-group">
+        <label class="form-label">Fecha</label>
+        <input type="date" class="form-control" id="bookDate">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Horario disponible</label>
+        <div class="time-slots" id="timeSlots"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Duración</label>
+        <select class="form-control" id="bookDuration" onchange="updateSummary()">
+          <option value="1">1 hora</option>
+          <option value="1.5">1 hora 30 min</option>
+          <option value="2">2 horas</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Modalidad</label>
+        <select class="form-control" id="bookModality">
+          <option>En línea (Zoom / Meet)</option>
+          <option>Presencial — en mi casa</option>
+          <option>Presencial — en casa del profesor</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Mensaje al profesor (opcional)</label>
+        <textarea class="form-control" rows="3" placeholder="Cuéntale qué temas quieres repasar..."></textarea>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;padding:14px;" onclick="confirmBooking()">
+        💳 Confirmar y pagar
+      </button>
+    </div>
+
+    <div class="booking-summary" id="bookingSummary">
+      <!-- filled dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SUCCESS ===================== -->
+<div class="page" id="page-success">
+  <div class="success-page">
+    <div class="success-icon">🎉</div>
+    <h2 style="font-size:2rem;margin-bottom:.75rem;">¡Clase confirmada!</h2>
+    <p style="color:var(--text2);max-width:400px;margin-bottom:2rem;">
+      Tu sesión ha sido reservada exitosamente. Recibirás un correo con todos los detalles y el enlace de conexión.
+    </p>
+    <div class="card-box" style="max-width:400px;margin:0 auto 2rem;">
+      <div class="card-box-title">Resumen de tu reserva</div>
+      <div id="successDetails"></div>
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+      <button class="btn btn-primary" onclick="showPage('dashboard')">Ver mi panel</button>
+      <button class="btn btn-ghost" onclick="showPage('home')">Ir al inicio</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DASHBOARD ===================== -->
+<div class="page" id="page-dashboard">
+  <div class="dashboard-layout">
+    <div class="dashboard-header">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;">Hola, Carlos 👋</div>
+        <div style="color:var(--text3);font-size:14px;">Aquí tienes el resumen de tu actividad</div>
+      </div>
+      <button class="btn btn-primary" onclick="showPage('search')">+ Reservar clase</button>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-label">Clases tomadas</div>
+        <div class="metric-value">24</div>
+        <div class="metric-change up">↑ 4 este mes</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Horas de estudio</div>
+        <div class="metric-value">38h</div>
+        <div class="metric-change up">↑ 12% vs último mes</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Profesores favoritos</div>
+        <div class="metric-value">5</div>
+        <div class="metric-change">guardados</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Próxima clase</div>
+        <div class="metric-value" style="font-size:1.3rem;">Mañana</div>
+        <div class="metric-change">10:00 AM · Matemáticas</div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card-box">
+        <div class="card-box-title">Mis clases recientes</div>
+        <div id="sessionsList"></div>
+      </div>
+
+      <div>
+        <div class="card-box" style="margin-bottom:1.5rem;">
+          <div class="card-box-title">Mis materias</div>
+          <div id="subjectChart"></div>
+        </div>
+        <div class="card-box">
+          <div class="card-box-title">Profesores favoritos</div>
+          <div id="favTeachers"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ DATA ============
+const teachers = [
+  { id:1, name:'Ana García', initials:'AG', color:'#1A56FF', subject:'Matemáticas', rating:4.9, reviews:128, price:45, exp:7, mode:'En línea · Presencial', bio:'Licenciada en Matemáticas por la Universidad Nacional con 7 años de experiencia. Me especializo en cálculo, álgebra y preparación para pruebas de Estado. He ayudado a más de 300 estudiantes a mejorar sus calificaciones.', specialties:['Cálculo Diferencial','Álgebra Lineal','Estadística','Pre-cálculo','Geometría','Pruebas Saber'], available:true },
+  { id:2, name:'Carlos Mejía', initials:'CM', color:'#FF5C35', subject:'Inglés', rating:4.8, reviews:96, price:35, exp:5, mode:'En línea', bio:'Certificado CELTA por Cambridge University. Hablo inglés como nativo (vivía en Boston 3 años). Mi método es 100% conversacional y práctico. Especial para viajes, trabajo y certificaciones IELTS/TOEFL.', specialties:['IELTS','TOEFL','Conversación','Business English','Gramática Avanzada','Pronunciación'], available:true },
+  { id:3, name:'Valentina Torres', initials:'VT', color:'#8B5CF6', subject:'Piano & Música', rating:5.0, reviews:64, price:55, exp:10, mode:'Presencial', bio:'Pianista concertista graduada del Conservatorio Nacional. He dado conciertos en Colombia, España y México. Enseño desde principiantes hasta nivel avanzado con metodología Suzuki adaptada.', specialties:['Piano clásico','Teoría musical','Solfeo','Composición','Piano popular','Lectura de partituras'], available:false },
+  { id:4, name:'Diego Ramírez', initials:'DR', color:'#14B8A6', subject:'Programación', rating:4.7, reviews:87, price:60, exp:8, mode:'En línea', bio:'Senior Developer con 8 años en la industria tech. He trabajado en startups de Silicon Valley. Enseño desde cero hasta nivel profesional. Mi objetivo es que mis estudiantes consigan su primer trabajo en tech.', specialties:['Python','JavaScript','React','Node.js','Bases de Datos','Algoritmos'], available:true },
+  { id:5, name:'Laura Pérez', initials:'LP', color:'#EC4899', subject:'Química', rating:4.9, reviews:112, price:40, exp:6, mode:'En línea · Presencial', bio:'Química Industrial con maestría en Educación. Transformo los conceptos más difíciles en algo comprensible. Experta en preparación para exámenes universitarios de admisión.', specialties:['Química General','Química Orgánica','Termodinámica','Estequiometría','Laboratorio Virtual','Pruebas de Admisión'], available:true },
+  { id:6, name:'Andrés Orozco', initials:'AO', color:'#F59E0B', subject:'Historia & Sociales', rating:4.6, reviews:73, price:30, exp:4, mode:'En línea', bio:'Historiador apasionado por la historia latinoamericana y mundial. Método socrático: aprenderás a pensar críticamente, no a memorizar. Ideal para bachillerato y preparación universitaria.', specialties:['Historia de Colombia','Historia Mundial','Geografía','Constitución','Economía Básica','Análisis crítico'], available:true },
+];
+
+const sessions = [
+  { teacher:'Ana García', initials:'AG', color:'#1A56FF', subject:'Matemáticas - Cálculo', date:'Mañana 10:00 AM', status:'upcoming' },
+  { teacher:'Carlos Mejía', initials:'CM', color:'#FF5C35', subject:'Inglés - Conversación', date:'Hace 2 días', status:'completed' },
+  { teacher:'Diego Ramírez', initials:'DR', color:'#14B8A6', subject:'Python - Funciones', date:'Hace 5 días', status:'completed' },
+  { teacher:'Laura Pérez', initials:'LP', color:'#EC4899', subject:'Química Orgánica', date:'Hace 1 semana', status:'completed' },
+  { teacher:'Andrés Orozco', initials:'AO', color:'#F59E0B', subject:'Historia Colombia', date:'Hace 2 semanas', status:'cancelled' },
+];
+
+const reviews = [
+  { name:'Sofía M.', initials:'SM', rating:5, date:'hace 3 días', text:'Excelente profesora. Explica cada concepto de forma muy clara y con paciencia infinita. Mejoré mi nota de 2.8 a 4.5 en apenas un mes.' },
+  { name:'Julián R.', initials:'JR', rating:5, date:'hace 1 semana', text:'La mejor tutora que he tenido. Muy puntual y preparada. Sus ejercicios prácticos son exactamente lo que se necesita para los exámenes.' },
+  { name:'Mariana V.', initials:'MV', rating:4, date:'hace 2 semanas', text:'Muy buena explicación, es dinámica y hace las clases entretenidas. El único detalle es que a veces va un poco rápido, pero responde cualquier duda al instante.' },
+  { name:'Pablo T.', initials:'PT', rating:5, date:'hace 3 semanas', text:'Increíble. Llevaba 3 semestres aplazando Cálculo y con ella en 4 clases lo entendí todo. 100% recomendada sin dudarlo.' },
+];
+
+// ============ STATE ============
+let currentTeacher = teachers[0];
+let selectedSlot = null;
+let selectedDate = null;
+let currentPage = 'home';
+
+// ============ RENDER ============
+function renderTeacherCard(t, onclick) {
+  return `
+    <div class="teacher-card" onclick="${onclick}">
+      <div class="tc-header">
+        <div class="tc-avatar" style="background:${t.color}">${t.initials}</div>
+        ${t.available ? '<div class="tc-badge">● Disponible</div>' : ''}
+        <div class="tc-name">${t.name}</div>
+        <div class="tc-subject">${t.subject}</div>
+      </div>
+      <div class="tc-body">
+        <div class="tc-meta">
+          <span>⭐ ${t.rating} (${t.reviews})</span>
+          <span>📚 ${t.exp} años exp.</span>
+          <span>💻 ${t.mode.includes('Presencial') ? '🏠' : '🖥️'}</span>
+        </div>
+        <div class="tc-price">
+          <div><strong>$${t.price}</strong> <span>/hora</span></div>
+          <button class="btn btn-primary" style="font-size:13px;padding:8px 16px;" onclick="event.stopPropagation();openProfile(${t.id})">Ver perfil</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderHomeGrid() {
+  const grid = document.getElementById('homeTeachersGrid');
+  grid.innerHTML = teachers.slice(0,3).map(t => renderTeacherCard(t, `openProfile(${t.id})`)).join('');
+}
+
+function renderSearchGrid(list) {
+  const grid = document.getElementById('searchGrid');
+  grid.innerHTML = list.map(t => renderTeacherCard(t, `openProfile(${t.id})`)).join('');
+  document.getElementById('resultCount').textContent = list.length;
+}
+
+function renderProfile(t) {
+  document.getElementById('profileHeader').innerHTML = `
+    <div class="profile-avatar" style="background:${t.color}">${t.initials}</div>
+    <div>
+      <div class="profile-name">${t.name}</div>
+      <div class="profile-subject">${t.subject}</div>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.75rem;font-size:14px;color:var(--text2);">
+        <span>⭐ ${t.rating}/5 · ${t.reviews} reseñas</span>
+        <span>📚 ${t.exp} años de experiencia</span>
+        <span>💬 ${t.mode}</span>
+      </div>
+      <div class="profile-tags">
+        ${t.specialties.slice(0,4).map(s => `<span class="tag">${s}</span>`).join('')}
+      </div>
+    </div>
+    <div class="profile-pricing">
+      <div class="price">$${t.price}</div>
+      <div class="per">por hora</div>
+      <button class="btn" style="background:#fff;color:var(--brand);width:100%;font-weight:600;" onclick="openBooking(${t.id})">Reservar clase</button>
+    </div>`;
+
+  document.getElementById('profileBio').textContent = t.bio;
+
+  document.getElementById('profileSpecialties').innerHTML = t.specialties.map(s => `
+    <div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--brand-light);border-radius:var(--radius-sm);">
+      <span style="color:var(--brand);font-size:16px;">✓</span>
+      <span style="font-size:14px;font-weight:500;">${s}</span>
+    </div>`).join('');
+
+  document.getElementById('reviewsList').innerHTML = reviews.map(r => `
+    <div class="review-card">
+      <div class="review-header">
+        <div class="review-avatar">${r.initials}</div>
+        <div>
+          <div class="review-name">${r.name}</div>
+          <div class="review-date">${r.date}</div>
+        </div>
+        <div class="stars" style="margin-left:auto;">★★★★${r.rating===5?'★':'☆'}</div>
+      </div>
+      <div class="review-text">${r.text}</div>
+    </div>`).join('');
+
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const month = 'Mayo 2025';
+  const days = ['L','M','M','J','V','S','D'];
+  const startDay = 3; // wednesday
+  const totalDays = 31;
+  const unavailable = [11,12,18,19,25,26,3,4,10];
+
+  let html = `<div class="calendar">
+    <div class="cal-header">
+      <button>‹</button>
+      <span>${month}</span>
+      <button>›</button>
+    </div>
+    <div class="cal-days">${days.map(d=>`<div class="cal-day-label">${d}</div>`).join('')}</div>
+    <div class="cal-body">`;
+
+  for(let i=0;i<startDay;i++) html += `<div class="cal-cell empty"></div>`;
+  for(let d=1;d<=totalDays;d++) {
+    const unav = unavailable.includes(d);
+    const cls = unav ? 'cal-cell unavailable' : 'cal-cell';
+    const action = unav ? '' : `onclick="selectCalDay(${d},this)"`;
+    html += `<div class="${cls}" ${action}>${d}</div>`;
+  }
+  html += '</div></div>';
+  document.getElementById('scheduleCalendar').innerHTML = html;
+}
+
+function selectCalDay(day, el) {
+  document.querySelectorAll('.cal-cell').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  openBooking(currentTeacher.id, `2025-05-${String(day).padStart(2,'0')}`);
+}
+
+function renderBooking(t) {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('bookDate').value = today;
+  document.getElementById('bookDate').min = today;
+  document.getElementById('bookDate').addEventListener('change', updateSummary);
+
+  const slots = ['08:00','09:00','10:00','11:00','14:00','15:00','16:00','17:00','18:00'];
+  const unavSlots = ['09:00','11:00','17:00'];
+  document.getElementById('timeSlots').innerHTML = slots.map(s => {
+    const unav = unavSlots.includes(s);
+    return `<div class="slot ${unav?'unavailable':''}" onclick="${unav?'':'selectSlot(this, \''+s+'\')'}">${s}</div>`;
+  }).join('');
+
+  updateSummary();
+}
+
+function selectSlot(el, time) {
+  document.querySelectorAll('.slot').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSlot = time;
+  updateSummary();
+}
+
+function updateSummary() {
+  const t = currentTeacher;
+  const dur = parseFloat(document.getElementById('bookDuration').value);
+  const subtotal = t.price * dur;
+  const fee = Math.round(subtotal * 0.05);
+  const total = subtotal + fee;
+
+  document.getElementById('bookingSummary').innerHTML = `
+    <h3>Resumen de reserva</h3>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,0.2);">
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:16px;">${t.initials}</div>
+      <div>
+        <div style="font-weight:600;">${t.name}</div>
+        <div style="font-size:13px;opacity:0.7;">${t.subject}</div>
+      </div>
+    </div>
+    <div class="booking-row"><span>Precio por hora</span><span>$${t.price}</span></div>
+    <div class="booking-row"><span>Duración</span><span>${dur}h</span></div>
+    <div class="booking-row"><span>Subtotal</span><span>$${subtotal}</span></div>
+    <div class="booking-row"><span>Comisión plataforma (5%)</span><span>$${fee}</span></div>
+    <div class="booking-row total"><span>Total</span><span>$${total}</span></div>
+    <div style="margin-top:1.5rem;background:rgba(255,255,255,0.1);border-radius:10px;padding:1rem;font-size:13px;opacity:.8;">
+      🔒 Pago seguro con SSL · Cancelación gratuita 24h antes
+    </div>`;
+}
+
+function renderDashboard() {
+  document.getElementById('sessionsList').innerHTML = sessions.map(s => `
+    <div class="session-item">
+      <div class="session-avatar" style="background:${s.color}22;color:${s.color};">${s.initials}</div>
+      <div class="session-info">
+        <div class="session-name">${s.teacher}</div>
+        <div class="session-detail">${s.subject} · ${s.date}</div>
+      </div>
+      <span class="session-status status-${s.status}">
+        ${s.status==='upcoming'?'Próxima':s.status==='completed'?'Completada':'Cancelada'}
+      </span>
+    </div>`).join('');
+
+  const subjects = [
+    {name:'Matemáticas', pct:35, color:'#1A56FF'},
+    {name:'Inglés', pct:25, color:'#FF5C35'},
+    {name:'Programación', pct:20, color:'#14B8A6'},
+    {name:'Química', pct:20, color:'#EC4899'},
+  ];
+
+  document.getElementById('subjectChart').innerHTML = subjects.map(s => `
+    <div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+        <span>${s.name}</span><span style="color:var(--text3);">${s.pct}%</span>
+      </div>
+      <div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden;">
+        <div style="width:${s.pct}%;background:${s.color};height:100%;border-radius:4px;"></div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('favTeachers').innerHTML = teachers.slice(0,3).map(t => `
+    <div class="session-item">
+      <div class="session-avatar" style="background:${t.color}22;color:${t.color};">${t.initials}</div>
+      <div class="session-info">
+        <div class="session-name">${t.name}</div>
+        <div class="session-detail">${t.subject} · ⭐ ${t.rating}</div>
+      </div>
+      <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px;" onclick="openProfile(${t.id})">Ver</button>
+    </div>`).join('');
+}
+
+// ============ NAV ============
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  currentPage = page;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(page==='search') renderSearchGrid(teachers);
+  if(page==='dashboard') renderDashboard();
+}
+
+function openProfile(id) {
+  currentTeacher = teachers.find(t=>t.id===id);
+  renderProfile(currentTeacher);
+  document.querySelectorAll('.profile-tab').forEach((t,i)=>{
+    t.classList.toggle('active', i===0);
+  });
+  document.querySelectorAll('.tab-content').forEach((c,i)=>{
+    c.classList.toggle('active', i===0);
+  });
+  showPage('profile');
+}
+
+function openBooking(id, date) {
+  currentTeacher = teachers.find(t=>t.id===id);
+  renderBooking(currentTeacher);
+  if(date) {
+    document.getElementById('bookDate').value = date;
+    updateSummary();
+  }
+  showPage('booking');
+}
+
+function switchTab(tab) {
+  const tabs = ['about','reviews','schedule'];
+  document.querySelectorAll('.profile-tab').forEach((el,i) => {
+    el.classList.toggle('active', tabs[i]===tab);
+  });
+  tabs.forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+  });
+}
+
+function doHeroSearch() {
+  const q = document.getElementById('heroSearch').value;
+  document.getElementById('searchInput').value = q;
+  showPage('search');
+  renderSearchGrid(teachers);
+}
+
+function searchCategory(cat) {
+  document.getElementById('searchInput').value = cat;
+  showPage('search');
+  renderSearchGrid(teachers.filter(t => t.subject.toLowerCase().includes(cat.toLowerCase()) || Math.random()>.3));
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const maxPrice = parseInt(document.getElementById('priceRange').value);
+  const filtered = teachers.filter(t =>
+    (q==='' || t.subject.toLowerCase().includes(q) || t.name.toLowerCase().includes(q)) &&
+    t.price <= maxPrice
+  );
+  renderSearchGrid(filtered.length>0 ? filtered : teachers);
+  showToast(`Filtros aplicados — ${filtered.length || teachers.length} resultados`);
+}
+
+function confirmBooking() {
+  const t = currentTeacher;
+  const date = document.getElementById('bookDate').value || 'Fecha seleccionada';
+  const dur = document.getElementById('bookDuration').value;
+  const slot = selectedSlot || '10:00 AM';
+  const total = (t.price * parseFloat(dur) * 1.05).toFixed(0);
+
+  document.getElementById('successDetails').innerHTML = `
+    <div class="booking-row" style="border-bottom:1px solid var(--border);padding:8px 0;"><span style="color:var(--text3)">Profesor</span><span>${t.name}</span></div>
+    <div class="booking-row" style="border-bottom:1px solid var(--border);padding:8px 0;"><span style="color:var(--text3)">Materia</span><span>${t.subject}</span></div>
+    <div class="booking-row" style="border-bottom:1px solid var(--border);padding:8px 0;"><span style="color:var(--text3)">Fecha</span><span>${date}</span></div>
+    <div class="booking-row" style="border-bottom:1px solid var(--border);padding:8px 0;"><span style="color:var(--text3)">Hora</span><span>${slot}</span></div>
+    <div class="booking-row" style="padding:8px 0;font-weight:600;"><span style="color:var(--text3)">Total pagado</span><span>$${total}</span></div>`;
+
+  showPage('success');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = '✓ '+msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ============ INIT ============
+renderHomeGrid();
+renderSearchGrid(teachers);
+</script>
+</body>
+</html>
