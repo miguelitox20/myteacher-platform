@@ -1,49 +1,45 @@
-# MyTeacher — Plataforma de Tutorías Particulares 🚀
-
-**MyTeacher** es una aplicación web interactiva diseñada para conectar a estudiantes con profesores particulares de diversas áreas (Matemáticas, Inglés, Programación, etc.). La plataforma permite explorar perfiles, filtrar resultados por precio o materia, y simular el proceso completo de reserva de una clase.
 
 ## 🔗 Enlaces del Proyecto
 * **Repositorio GitHub:https://github.com/miguelitox20/myteacher-platform.git
 * **Demo en vivo (Vercel/Railway):[myteacher-platform.vercel.app](https://myteacher-platform.vercel.app/)
 
----
+# ConectaEstudia (Demo web)
 
-## ✨ Características Principales
+Página web demo (HTML + React 18 vía Babel standalone) para presentar oportunidades laborales/estudios y simular un flujo de:
 
-### 1. Sistema Single Page Application (SPA)
-La aplicación funciona en una sola página, gestionando la navegación a través de la manipulación del DOM con JavaScript para mostrar u ocultar secciones (`home`, `search`, `profile`, `booking`, `dashboard`) sin recargar el navegador.
+**Inicio → Oportunidades → Detalle → Aplicar → Mis Aplicaciones**
 
-### 2. Búsqueda y Filtrado Dinámico
-* **Exploración:** Los usuarios pueden buscar profesores por nombre o materia desde la página de inicio o la sección de exploración.
-* **Filtros Avanzados:** Incluye un sidebar de filtros funcionales para ajustar la búsqueda según el precio por hora, modalidad (en línea/presencial) y calificación.
+## Estructura
+- `index.html`: contiene la app completa (datos mock + componentes React + estilos base dentro del archivo).
+- `styles.css`: estilos globales (en esta demo, gran parte del CSS también vive dentro de `index.html`).
+- `TODO.md`: checklist de mejoras realizadas.
 
-### 3. Perfiles Detallados de Profesores
-Cada profesor cuenta con un perfil completo que incluye:
-* Biografía y años de experiencia.
-* Especialidades específicas y reseñas de otros estudiantes.
-* Calendario de disponibilidad visual para Mayo 2025.
+## Funcionalidades principales
+- Navegación entre páginas (Home, Oportunidades, Detalle, Perfil, Aplicaciones).
+- Filtros y ordenamiento en la lista de oportunidades.
+- Modal de confirmación al aplicar.
+- Toast de confirmación al aplicar.
+- Modo oscuro (tema) desde el navbar.
+- Guardar oportunidad (estado local de la sesión) con feedback en el botón.
 
-### 4. Flujo de Reserva Integrado
-* **Cálculo en Tiempo Real:** Al seleccionar la duración de la clase, el sistema calcula automáticamente el subtotal, la comisión de la plataforma y el total a pagar.
-* **Confirmación:** Genera un resumen final de la reserva tras simular el pago.
+## Mejoras UX/Accesibilidad realizadas
+- Botón **Guardar oportunidad** funcional (alternar guardado) con `aria-pressed`.
+- Botones del navbar con `aria-label` (tema, notificaciones, perfil).
+- Modal con `role="dialog"` y `aria-modal="true"`.
+- Cerrar modal con **Escape**.
+- Ajuste del componente `Icon` para soportar `style`.
+- Nombre de perfil y archivo del CV ajustados a **Miguel Rodríguez**.
 
-### 5. Panel de Control (Dashboard)
-El estudiante dispone de una vista personalizada donde puede ver sus estadísticas de estudio, clases próximas y sus profesores favoritos.
+## Cómo ejecutar
+1. Abre `index.html` directamente en tu navegador.
+2. (Opcional) Si quieres evitar problemas por CORS/caché en algunos navegadores, usa un servidor estático simple.
 
----
+Ejemplos (si tienes Python):
+```bash
+python -m http.server 5500
+```
+Luego entra a: `http://localhost:5500/index.html`
 
-## 🛠️ Tecnologías Utilizadas
-
-* **HTML5:** Estructura semántica para todas las vistas de la aplicación.
-* **CSS3:** Diseño responsivo utilizando **Flexbox** y **CSS Grid**. Uso de variables modernas para la gestión de colores y sombras.
-* **JavaScript (Vanilla):** Lógica de negocio, gestión del estado de la aplicación, filtrado de datos y renderizado dinámico de componentes.
-* **Fuentes:** Google Fonts (Syne y DM Sans).
-
----
-
-## 📂 Estructura de Archivos
-
-```text
-├── index.html   # Estructura de las páginas, lógica de JS y datos de profesores.
-├── styles.css   # Estilos globales, diseño responsivo y animaciones.
-└── README.md    # Documentación del proyecto.
+## Notas
+- Los datos son **mock** dentro de `index.html`.
+- El guardado y aplicaciones se manejan en **estado en memoria** (no persiste tras recargar la página).
