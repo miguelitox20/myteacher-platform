@@ -1,6 +1,6 @@
 
 ## 🔗 Enlaces del Proyecto
-* **Repositorio GitHub:https://github.com/miguelitox20/myteacher-platform.git
+* **Repositorio GitHub:(https://github.com/miguelitox20/conectaestudia-platform.git)
 * **Demo en vivo (Vercel/Railway):[myteacher-platform.vercel.app](https://myteacher-platform.vercel.app/)
 
 # ConectaEstudia (Demo web)
