@@ -12,7 +12,7 @@ Página web demo (HTML + React 18 vía Babel standalone) para presentar oportuni
 ## Estructura
 - `index.html`: contiene la app completa (datos mock + componentes React + estilos base dentro del archivo).
 - `styles.css`: estilos globales (en esta demo, gran parte del CSS también vive dentro de `index.html`).
-- `TODO.md`: checklist de mejoras realizadas.
+
 
 ## Funcionalidades principales
 - Navegación entre páginas (Home, Oportunidades, Detalle, Perfil, Aplicaciones).
