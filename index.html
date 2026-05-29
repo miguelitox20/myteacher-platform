@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ConectaEstudia — Talento universitario colombiano</title>
+  <meta name="description" content="Conecta tu talento con las mejores oportunidades laborales en Colombia." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text y='.9em' font-size='70' x='12'>⚡</text></svg>" />
+  <!-- React + ReactDOM + Babel (standalone, no build step needed) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ─── MOCK DATA ────────────────────────────────────────────────────────────────
+const OPPORTUNITIES = [
+  { id: 1, title: "Desarrollador Frontend React", company: "Bancolombia", location: "Medellín / Remoto", type: "Práctica", mode: "Híbrido", salary: "$1.200.000", deadline: "2025-06-30", featured: true, logo: "BC", color: "#FFDD00", description: "Buscamos un estudiante apasionado por el desarrollo web para unirse a nuestro equipo de innovación digital. Trabajarás en proyectos reales que impactan millones de colombianos.", requirements: ["React.js", "TypeScript", "CSS/Tailwind", "Git"], category: "Desarrollo", posted: "2025-05-20" },
+  { id: 2, title: "Analista de Marketing Digital", company: "Rappi", location: "Bogotá", type: "Tiempo Parcial", mode: "Presencial", salary: "$900.000", deadline: "2025-06-15", featured: true, logo: "RP", color: "#FF441F", description: "Únete al equipo de growth de Rappi y aprende de los mejores en marketing digital. Gestionarás campañas, analizarás métricas y ejecutarás estrategias.", requirements: ["Google Analytics", "Meta Ads", "Excel", "Canva"], category: "Marketing", posted: "2025-05-22" },
+  { id: 3, title: "Data Analyst Trainee", company: "Grupo Éxito", location: "Medellín", type: "Pasantía", mode: "Presencial", salary: "$1.000.000", deadline: "2025-07-01", featured: true, logo: "GE", color: "#E31E24", description: "Forma parte del equipo de datos del retail más grande de Colombia. Aprenderás a transformar datos en decisiones de negocio reales.", requirements: ["Python", "SQL", "Power BI", "Estadística"], category: "Datos", posted: "2025-05-18" },
+  { id: 4, title: "Diseñador UX/UI", company: "Platzi", location: "Bogotá / Remoto", type: "Práctica", mode: "Remoto", salary: "$1.100.000", deadline: "2025-06-20", featured: false, logo: "PL", color: "#99CC00", description: "Crea experiencias de aprendizaje que transformen vidas. Trabajarás con un equipo de clase mundial en diseño de productos educativos digitales.", requirements: ["Figma", "Prototyping", "UX Research", "Design Systems"], category: "Diseño", posted: "2025-05-15" },
+  { id: 5, title: "Ingeniero de Software Backend", company: "Truora", location: "Bogotá / Remoto", type: "Práctica", mode: "Remoto", salary: "$1.400.000", deadline: "2025-07-10", featured: false, logo: "TR", color: "#4F46E5", description: "Construye el futuro de la identidad digital en Latinoamérica. Desarrollarás APIs robustas y microservicios que procesan millones de transacciones.", requirements: ["Node.js", "PostgreSQL", "Docker", "AWS"], category: "Desarrollo", posted: "2025-05-10" },
+  { id: 6, title: "Community Manager", company: "MercadoLibre", location: "Bogotá", type: "Tiempo Parcial", mode: "Híbrido", salary: "$800.000", deadline: "2025-06-25", featured: false, logo: "ML", color: "#FFE600", description: "Gestiona la presencia digital del marketplace más grande de Latinoamérica en Colombia. Crearás contenido, responderás comunidades y analizarás métricas.", requirements: ["Redes Sociales", "Copywriting", "Photoshop", "Analítica"], category: "Marketing", posted: "2025-05-12" },
+  { id: 7, title: "QA Engineer Junior", company: "Lumu Technologies", location: "Bogotá / Remoto", type: "Práctica", mode: "Remoto", salary: "$1.050.000", deadline: "2025-07-05", featured: false, logo: "LM", color: "#06B6D4", description: "Asegura la calidad del software de ciberseguridad líder en Colombia. Aprenderás testing manual y automatizado en un ambiente de startup de alto crecimiento.", requirements: ["Testing", "Selenium", "Postman", "Jira"], category: "Desarrollo", posted: "2025-05-08" },
+  { id: 8, title: "Practicante Finanzas", company: "Davivienda", location: "Bogotá", type: "Práctica", mode: "Presencial", salary: "$950.000", deadline: "2025-06-12", featured: false, logo: "DV", color: "#E31E2D", description: "Aprende las finanzas desde adentro de uno de los bancos más importantes de Colombia. Rotarás por diferentes áreas y tendrás mentoría de ejecutivos senior.", requirements: ["Excel Avanzado", "Finanzas", "Contabilidad", "PowerPoint"], category: "Finanzas", posted: "2025-05-05" },
+];
+
+const CATEGORIES = ["Todos", "Desarrollo", "Marketing", "Datos", "Diseño", "Finanzas"];
+const TYPES = ["Práctica", "Pasantía", "Tiempo Parcial"];
+const MODES = ["Remoto", "Híbrido", "Presencial"];
+
+// ─── ICONS (inline SVG) ───────────────────────────────────────────────────────
+const Icon = ({ name, size = 20, className = "", style = {} }) => {
+  const icons = {
+    search: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+    map: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+    briefcase: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>,
+    calendar: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    dollar: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>,
+    user: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+    home: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+    list: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>,
+    file: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>,
+    x: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+    check: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 6 9 17 4 12"/></svg>,
+    arrow: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
+    star: <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+    zap: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+    filter: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>,
+    sun: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
+    moon: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>,
+    menu: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
+    bell: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>,
+    clock: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+    trending: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
+    users: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>,
+    building: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><line x1="9" y1="6" x2="9.01" y2="6"/><line x1="9" y1="10" x2="9.01" y2="10"/><line x1="15" y1="6" x2="15.01" y2="6"/><line x1="15" y1="10" x2="15.01" y2="10"/></svg>,
+  };
+  const node = icons[name] || null;
+  if (!node) return null;
+  return React.cloneElement(node, { style });
+};
+
+// ─── STYLES ───────────────────────────────────────────────────────────────────
+const globalStyles = `
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8f9ff;
+    --bg2: #ffffff;
+    --bg3: #eef0ff;
+    --text: #030213;
+    --text2: #4a4a6a;
+    --text3: #8888aa;
+    --border: #e2e4f0;
+    --blue: #2563eb;
+    --blue-dark: #1d4ed8;
+    --blue-deeper: #1e3a8a;
+    --blue-light: #dbeafe;
+    --blue-pale: #eff6ff;
+    --accent: #06b6d4;
+    --accent2: #8b5cf6;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --shadow: 0 1px 3px rgba(0,0,0,.07), 0 4px 12px rgba(0,0,0,.05);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.1), 0 1px 4px rgba(0,0,0,.06);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.06);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 20px;
+    --transition: 0.18s cubic-bezier(.4,0,.2,1);
+  }
+
+  [data-theme="dark"] {
+    --bg: #090920;
+    --bg2: #0f102a;
+    --bg3: #161835;
+    --text: #f0f0ff;
+    --text2: #a0a0c0;
+    --text3: #6060a0;
+    --border: #1e2050;
+    --blue-light: #1e2a5a;
+    --blue-pale: #131530;
+    --shadow: 0 1px 3px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.2);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.4), 0 1px 4px rgba(0,0,0,.2);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,.5), 0 4px 12px rgba(0,0,0,.3);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  h1,h2,h3,h4,h5,h6 { font-family: 'Syne', sans-serif; line-height: 1.2; }
+
+  .app { min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* NAVBAR */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: 64px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center;
+    padding: 0 24px;
+    gap: 24px;
+    transition: background var(--transition);
+  }
+  .navbar-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 18px;
+    color: var(--text); text-decoration: none; flex-shrink: 0;
+  }
+  .brand-logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue), var(--accent));
+    display: flex; align-items: center; justify-content: center; color: #fff;
+  }
+  .navbar-links { display: flex; gap: 4px; flex: 1; }
+  .nav-link {
+    padding: 7px 14px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500;
+    color: var(--text2); background: none; border: none;
+    cursor: pointer; transition: all var(--transition);
+    white-space: nowrap;
+  }
+  .nav-link:hover { color: var(--blue); background: var(--blue-pale); }
+  .nav-link.active { color: var(--blue); background: var(--blue-light); font-weight: 600; }
+  .navbar-actions { display: flex; align-items: center; gap: 8px; }
+  .btn-icon {
+    width: 36px; height: 36px; border-radius: var(--radius-sm);
+    background: none; border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text2); cursor: pointer; transition: all var(--transition);
+  }
+  .btn-icon:hover { background: var(--bg3); color: var(--text); }
+  .btn-primary {
+    padding: 8px 18px; border-radius: var(--radius-sm);
+    background: var(--blue); color: #fff; border: none;
+    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px;
+    cursor: pointer; transition: all var(--transition); white-space: nowrap;
+  }
+  .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,.4); }
+  .btn-outline {
+    padding: 8px 18px; border-radius: var(--radius-sm);
+    background: none; color: var(--blue); border: 1.5px solid var(--blue);
+    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px;
+    cursor: pointer; transition: all var(--transition); white-space: nowrap;
+  }
+  .btn-outline:hover { background: var(--blue-pale); }
+
+  /* BOTTOM NAV (mobile) */
+  .bottom-nav {
+    display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: var(--bg2); border-top: 1px solid var(--border);
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    justify-content: space-around;
+  }
+  .bottom-nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: none; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500;
+    color: var(--text3); padding: 4px 16px; border-radius: var(--radius-sm);
+    transition: color var(--transition);
+  }
+  .bottom-nav-item.active { color: var(--blue); }
+
+  /* MAIN */
+  .main { flex: 1; padding-top: 64px; padding-bottom: 0; }
+  
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #030213 0%, #0f2060 40%, #1d4ed8 75%, #2563eb 100%);
+    padding: 72px 24px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(6,182,212,.15) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 80% at 10% 80%, rgba(139,92,246,.15) 0%, transparent 60%);
+  }
+  .hero-dots {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .hero-inner {
+    max-width: 780px; margin: 0 auto; position: relative; text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+    color: #a5f3fc; font-size: 13px; font-weight: 600; letter-spacing: .04em;
+    padding: 5px 14px; border-radius: 999px; margin-bottom: 24px;
+    backdrop-filter: blur(8px);
+  }
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 54px); font-weight: 800;
+    color: #fff; margin-bottom: 18px; letter-spacing: -.02em;
+  }
+  .hero h1 em { font-style: normal; color: #7dd3fc; }
+  .hero-subtitle { color: #93c5fd; font-size: 17px; margin-bottom: 36px; max-width: 520px; margin-left: auto; margin-right: auto; }
+
+  .search-box {
+    background: #fff; border-radius: var(--radius-lg);
+    display: flex; align-items: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    overflow: hidden; max-width: 640px; margin: 0 auto 24px;
+  }
+  .search-icon { padding: 0 16px; color: #94a3b8; flex-shrink: 0; }
+  .search-box input {
+    flex: 1; border: none; outline: none; padding: 16px 0;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; color: #1e293b;
+    background: transparent;
+  }
+  .search-box input::placeholder { color: #94a3b8; }
+  .search-btn {
+    margin: 8px; padding: 10px 22px; border-radius: 12px;
+    background: var(--blue); color: #fff; border: none;
+    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px;
+    cursor: pointer; transition: all var(--transition); white-space: nowrap;
+  }
+  .search-btn:hover { background: var(--blue-dark); }
+  .quick-links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .quick-link {
+    padding: 6px 14px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.25); color: rgba(255,255,255,.85);
+    font-size: 13px; font-weight: 500; cursor: pointer; background: rgba(255,255,255,.08);
+    transition: all var(--transition); backdrop-filter: blur(4px);
+  }
+  .quick-link:hover { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.5); color: #fff; }
+
+  /* STATS */
+  .stats-bar {
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+  }
+  .stats-inner { max-width: 960px; margin: 0 auto; display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--blue); }
+  .stat-label { font-size: 13px; color: var(--text3); font-weight: 500; }
+
+  /* SECTIONS */
+  .section { padding: 56px 24px; }
+  .section-inner { max-width: 960px; margin: 0 auto; }
+  .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; gap: 16px; flex-wrap: wrap; }
+  .section-title { font-size: clamp(22px, 3vw, 28px); font-weight: 700; }
+  .section-link { font-size: 14px; color: var(--blue); font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .section-link:hover { text-decoration: underline; }
+
+  /* CARDS GRID */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+
+  /* OPPORTUNITY CARD */
+  .opp-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    transition: all var(--transition); cursor: pointer; position: relative;
+    box-shadow: var(--shadow);
+  }
+  .opp-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .opp-card.featured { border-color: var(--blue); }
+  .featured-badge {
+    position: absolute; top: 14px; right: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--accent));
+    color: #fff; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+    letter-spacing: .03em;
+  }
+  .card-company { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .company-logo {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px; color: #fff;
+    flex-shrink: 0;
+  }
+  .company-info { flex: 1; min-width: 0; }
+  .company-name { font-size: 13px; font-weight: 600; color: var(--text2); }
+  .job-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+  .card-meta { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .meta-row { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text2); }
+  .badge {
+    display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+  }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-cyan { background: #cffafe; color: #0891b2; }
+  .badge-purple { background: #ede9fe; color: #7c3aed; }
+  .badge-green { background: #d1fae5; color: #065f46; }
+  .badge-orange { background: #fef3c7; color: #92400e; }
+  [data-theme="dark"] .badge-cyan { background: #0c4a5e; color: #67e8f9; }
+  [data-theme="dark"] .badge-purple { background: #3b1a6e; color: #c4b5fd; }
+  [data-theme="dark"] .badge-green { background: #064e3b; color: #6ee7b7; }
+  [data-theme="dark"] .badge-orange { background: #451a03; color: #fcd34d; }
+  .card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border); }
+  .card-salary { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--green); }
+  .card-deadline { font-size: 12px; color: var(--text3); }
+  .btn-sm {
+    padding: 7px 14px; border-radius: var(--radius-sm);
+    background: var(--blue-light); color: var(--blue);
+    border: none; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px;
+    cursor: pointer; transition: all var(--transition);
+  }
+  .btn-sm:hover { background: var(--blue); color: #fff; }
+
+  /* HOW IT WORKS */
+  .how-section { background: var(--bg3); }
+  .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .step {
+    background: var(--bg2); border-radius: var(--radius);
+    padding: 28px 24px; text-align: center;
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    position: relative;
+  }
+  .step-num {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--accent));
+    color: #fff; font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+    box-shadow: 0 6px 20px rgba(37,99,235,.35);
+  }
+  .step h3 { font-size: 16px; margin-bottom: 8px; }
+  .step p { font-size: 14px; color: var(--text2); }
+  .step-arrow {
+    display: none; position: absolute; right: -16px; top: 50%;
+    transform: translateY(-50%); z-index: 1; color: var(--blue-deeper);
+  }
+
+  /* OPPORTUNITIES PAGE */
+  .page { max-width: 1140px; margin: 0 auto; padding: 32px 24px; }
+  .page-header { margin-bottom: 28px; }
+  .page-title { font-size: clamp(24px, 3vw, 32px); font-weight: 800; margin-bottom: 6px; }
+  .page-subtitle { color: var(--text2); font-size: 15px; }
+  .opps-layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: start; }
+  .sidebar {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    position: sticky; top: 84px;
+  }
+  .sidebar-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .filter-group { margin-bottom: 20px; }
+  .filter-label { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+  .checkbox-item { display: flex; align-items: center; gap: 9px; padding: 5px 0; cursor: pointer; }
+  .checkbox-item input { width: 15px; height: 15px; accent-color: var(--blue); cursor: pointer; }
+  .checkbox-item label { font-size: 14px; cursor: pointer; color: var(--text2); }
+  .checkbox-item.active label { color: var(--blue); font-weight: 600; }
+
+  .opps-main {}
+  .opps-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .opps-search { flex: 1; min-width: 200px; }
+  .input-wrapper { position: relative; }
+  .input-wrapper svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; }
+  .input-search {
+    width: 100%; padding: 10px 14px 10px 38px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); background: var(--bg2); color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+    transition: border-color var(--transition);
+  }
+  .input-search:focus { border-color: var(--blue); }
+  .select-sort {
+    padding: 10px 14px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border); background: var(--bg2); color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; cursor: pointer;
+    transition: border-color var(--transition);
+  }
+  .select-sort:focus { border-color: var(--blue); }
+
+  .active-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .active-filter {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--blue-light); color: var(--blue);
+    padding: 4px 10px 4px 12px; border-radius: 999px; font-size: 13px; font-weight: 600;
+  }
+  .active-filter button { background: none; border: none; cursor: pointer; color: var(--blue); display: flex; align-items: center; padding: 0 0 0 2px; }
+  .clear-all { background: none; border: none; color: var(--text3); font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 999px; transition: color var(--transition); }
+  .clear-all:hover { color: var(--red); }
+
+  .opp-list { display: flex; flex-direction: column; gap: 12px; }
+  .opp-list-card {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    display: flex; align-items: flex-start; gap: 16px;
+    transition: all var(--transition); cursor: pointer;
+  }
+  .opp-list-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); }
+  .opp-list-body { flex: 1; min-width: 0; }
+  .opp-list-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .opp-list-company { font-size: 14px; color: var(--text2); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .opp-list-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; }
+  .opp-list-meta span { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 5px; }
+  .opp-list-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .no-results { text-align: center; padding: 56px 24px; color: var(--text3); }
+  .no-results-icon { font-size: 48px; margin-bottom: 12px; }
+
+  /* DETAIL PAGE */
+  .detail-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+  .detail-main {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px;
+  }
+  .detail-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
+  .detail-logo {
+    width: 64px; height: 64px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; color: #fff;
+    flex-shrink: 0;
+  }
+  .detail-title { font-size: clamp(20px, 2.5vw, 26px); margin-bottom: 4px; }
+  .detail-company { font-size: 15px; color: var(--text2); font-weight: 600; }
+  .detail-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; padding: 20px; background: var(--bg3); border-radius: var(--radius-sm); }
+  .detail-meta-item label { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: .06em; text-transform: uppercase; }
+  .detail-meta-item p { font-size: 14px; font-weight: 600; margin-top: 3px; }
+  .detail-section { margin-bottom: 24px; }
+  .detail-section h3 { font-size: 16px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .detail-section p { font-size: 14px; color: var(--text2); line-height: 1.7; }
+  .req-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .req-tag { padding: 5px 12px; border-radius: var(--radius-sm); background: var(--bg3); font-size: 13px; font-weight: 500; border: 1px solid var(--border); }
+  .detail-sidebar {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    position: sticky; top: 84px;
+  }
+  .btn-apply {
+    width: 100%; padding: 14px; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    color: #fff; border: none; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px;
+    cursor: pointer; transition: all var(--transition); margin-bottom: 12px;
+  }
+  .btn-apply:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,99,235,.5); }
+  .btn-save {
+    width: 100%; padding: 12px; border-radius: var(--radius-sm);
+    background: none; color: var(--blue); border: 1.5px solid var(--blue);
+    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 14px;
+    cursor: pointer; transition: all var(--transition);
+  }
+  .btn-save:hover { background: var(--blue-pale); }
+  .deadline-warning { margin-top: 14px; padding: 10px 14px; border-radius: var(--radius-sm); background: #fef3c7; color: #92400e; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 7px; }
+  [data-theme="dark"] .deadline-warning { background: #451a03; color: #fcd34d; }
+
+  /* PROFILE PAGE */
+  .profile-header {
+    background: linear-gradient(135deg, var(--blue-deeper) 0%, var(--blue-dark) 100%);
+    border-radius: var(--radius); padding: 28px; margin-bottom: 20px;
+    color: #fff; display: flex; align-items: center; gap: 20px;
+  }
+  .avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(255,255,255,.2); border: 2px solid rgba(255,255,255,.4);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .profile-sub { font-size: 14px; color: #93c5fd; }
+  .card-section {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 16px;
+  }
+  .card-section h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skill-tag { padding: 5px 12px; border-radius: 999px; background: var(--blue-light); color: var(--blue); font-size: 13px; font-weight: 600; border: 1px solid var(--blue); }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .info-field label { font-size: 12px; font-weight: 700; color: var(--text3); letter-spacing: .06em; text-transform: uppercase; }
+  .info-field p { font-size: 14px; font-weight: 500; margin-top: 3px; }
+
+  /* APPLICATIONS PAGE */
+  .app-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 12px;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .app-status { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+  .status-pending { background: #fef3c7; color: #92400e; }
+  .status-review { background: #dbeafe; color: #1d4ed8; }
+  .status-interview { background: #d1fae5; color: #065f46; }
+  .status-rejected { background: #fee2e2; color: #991b1b; }
+  [data-theme="dark"] .status-pending { background: #451a03; color: #fcd34d; }
+  [data-theme="dark"] .status-review { background: #1e2a5a; color: #93c5fd; }
+  [data-theme="dark"] .status-interview { background: #064e3b; color: #6ee7b7; }
+  [data-theme="dark"] .status-rejected { background: #450a0a; color: #fca5a5; }
+  .progress-steps { display: flex; gap: 4px; margin-top: 10px; }
+  .progress-step { flex: 1; height: 4px; border-radius: 999px; background: var(--border); }
+  .progress-step.done { background: var(--blue); }
+  .progress-step.current { background: var(--accent); }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: #1e293b; color: #fff; padding: 14px 18px; border-radius: var(--radius);
+    font-size: 14px; font-weight: 500; box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; gap: 10px;
+    animation: slideIn .25s ease; max-width: 320px;
+  }
+  [data-theme="dark"] .toast { background: var(--bg3); border: 1px solid var(--border); }
+  @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+    animation: fadeIn .2s ease;
+  }
+  .modal {
+    background: var(--bg2); border-radius: var(--radius-lg);
+    padding: 28px; max-width: 440px; width: 100%;
+    box-shadow: var(--shadow-lg); animation: scaleIn .2s ease;
+  }
+  .modal h2 { font-size: 20px; margin-bottom: 8px; }
+  .modal p { font-size: 14px; color: var(--text2); margin-bottom: 20px; }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-actions button { flex: 1; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes scaleIn { from { transform: scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .navbar-links, .navbar-actions .btn-outline, .navbar-actions .btn-primary { display: none; }
+    .bottom-nav { display: flex; }
+    .main { padding-bottom: 70px; }
+    .opps-layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .detail-layout { grid-template-columns: 1fr; }
+    .detail-sidebar { position: static; }
+    .info-grid { grid-template-columns: 1fr; }
+    .stats-inner { gap: 24px; }
+  }
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .opps-layout { grid-template-columns: 220px 1fr; }
+  }
+  @media (max-width: 480px) {
+    .hero { padding: 48px 16px 64px; }
+    .page { padding: 24px 16px; }
+    .opp-list-card { flex-direction: column; }
+    .detail-meta-grid { grid-template-columns: 1fr; }
+  }
+`;
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const MODE_BADGE = { Remoto: "badge-green", Híbrido: "badge-cyan", Presencial: "badge-orange" };
+const TYPE_BADGE = { Práctica: "badge-blue", Pasantía: "badge-purple", "Tiempo Parcial": "badge-orange" };
+
+function formatDate(d) {
+  return new Date(d).toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" });
+}
+function daysLeft(d) {
+  const diff = Math.ceil((new Date(d) - new Date()) / 86400000);
+  return diff;
+}
+
+// ─── COMPONENTS ──────────────────────────────────────────────────────────────
+function Toast({ msg, onClose }) {
+  useEffect(() => { const t = setTimeout(onClose, 3000); return () => clearTimeout(t); }, [onClose]);
+  return <div className="toast"><Icon name="check" size={16} />{msg}</div>;
+}
+
+function Navbar({ page, setPage, dark, setDark }) {
+  return (
+    <nav className="navbar">
+      <button className="navbar-brand" onClick={() => setPage("home")}>
+        <div className="brand-logo"><Icon name="zap" size={16} /></div>
+        ConectaEstudia
+      </button>
+      <div className="navbar-links">
+        {[["home","Inicio"],["opportunities","Oportunidades"],["profile","Mi Perfil"],["applications","Mis Aplicaciones"]].map(([k,label]) => (
+          <button key={k} className={`nav-link${page===k?" active":""}`} onClick={() => setPage(k)}>{label}</button>
+        ))}
+      </div>
+      <div className="navbar-actions">
+        <button className="btn-icon" onClick={() => setDark(d => !d)} title="Cambiar tema" aria-label="Cambiar tema">
+          <Icon name={dark ? "sun" : "moon"} size={17} />
+        </button>
+        <button className="btn-icon" title="Notificaciones" aria-label="Notificaciones"><Icon name="bell" size={17} /></button>
+        <button className="btn-outline" onClick={() => setPage("profile")} aria-label="Ir a perfil">Perfil</button>
+        <button className="btn-primary" onClick={() => setPage("opportunities")}>Explorar</button>
+      </div>
+    </nav>
+  );
+}
+
+function BottomNav({ page, setPage }) {
+  const items = [
+    ["home","home","Inicio"],
+    ["opportunities","list","Empleos"],
+    ["profile","user","Perfil"],
+    ["applications","file","Aplics."],
+  ];
+  return (
+    <nav className="bottom-nav">
+      {items.map(([k,icon,label]) => (
+        <button key={k} className={`bottom-nav-item${page===k?" active":""}`} onClick={() => setPage(k)}>
+          <Icon name={icon} size={22} />
+          {label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+function OppCard({ opp, onClick, featured }) {
+  const dl = daysLeft(opp.deadline);
+  return (
+    <div className="opp-card" onClick={onClick}>
+      {featured && <span className="featured-badge">★ Destacado</span>}
+      <div className="card-company">
+        <div className="company-logo" style={{background: opp.color}}>{opp.logo}</div>
+        <div className="company-info">
+          <div className="company-name">{opp.company}</div>
+        </div>
+      </div>
+      <div className="job-title">{opp.title}</div>
+      <div className="card-meta">
+        <div className="meta-row"><Icon name="map" size={13} />{opp.location}</div>
+        <div className="meta-row"><Icon name="calendar" size={13} />Vence: {formatDate(opp.deadline)}</div>
+      </div>
+      <div className="card-badges">
+        <span className={`badge ${TYPE_BADGE[opp.type]}`}>{opp.type}</span>
+        <span className={`badge ${MODE_BADGE[opp.mode]}`}>{opp.mode}</span>
+      </div>
+      <div className="card-footer">
+        <span className="card-salary">{opp.salary}<span style={{fontSize:11,fontWeight:400,color:"var(--text3)"}}>/mes</span></span>
+        <button className="btn-sm" onClick={e => {e.stopPropagation(); onClick();}}>Ver detalles</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── PAGES ───────────────────────────────────────────────────────────────────
+function HomePage({ setPage, setSelectedOpp, toast }) {
+  const [searchQ, setSearchQ] = useState("");
+
+  const handleSearch = useCallback(() => {
+    setPage("opportunities");
+  }, [setPage]);
+
+  return (
+    <>
+      {/* HERO */}
+      <section className="hero">
+        <div className="hero-dots" />
+        <div className="hero-inner">
+          <div className="hero-badge"><Icon name="zap" size={13} />La plataforma #1 para talento universitario colombiano</div>
+          <h1>Conecta tu <em>talento</em> con las mejores oportunidades</h1>
+          <p className="hero-subtitle">Prácticas, pasantías y empleos a tiempo parcial en las empresas más innovadoras de Colombia.</p>
+          <div className="search-box">
+            <span className="search-icon"><Icon name="search" size={18} /></span>
+            <input
+              value={searchQ} onChange={e => setSearchQ(e.target.value)}
+              placeholder="Busca por cargo, empresa o categoría..."
+              onKeyDown={e => e.key === "Enter" && handleSearch()}
+            />
+            <button className="search-btn" onClick={handleSearch}>Buscar</button>
+          </div>
+          <div className="quick-links">
+            {["Prácticas", "Remoto", "Desarrollo", "Marketing", "Datos", "Diseño"].map(q => (
+              <button key={q} className="quick-link" onClick={() => setPage("opportunities")}>{q}</button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* STATS */}
+      <div className="stats-bar">
+        <div className="stats-inner">
+          <div className="stat"><div className="stat-num">500+</div><div className="stat-label">Oportunidades activas</div></div>
+          <div className="stat"><div className="stat-num">10.000+</div><div className="stat-label">Estudiantes registrados</div></div>
+          <div className="stat"><div className="stat-num">200+</div><div className="stat-label">Empresas aliadas</div></div>
+          <div className="stat"><div className="stat-num">85%</div><div className="stat-label">Tasa de éxito</div></div>
+        </div>
+      </div>
+
+      {/* FEATURED */}
+      <section className="section">
+        <div className="section-inner">
+          <div className="section-header">
+            <h2 className="section-title">Oportunidades destacadas</h2>
+            <span className="section-link" onClick={() => setPage("opportunities")}>Ver todas →</span>
+          </div>
+          <div className="cards-grid">
+            {OPPORTUNITIES.filter(o => o.featured).map(opp => (
+              <OppCard key={opp.id} opp={opp} featured onClick={() => { setSelectedOpp(opp); setPage("detail"); }} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="section how-section">
+        <div className="section-inner">
+          <div className="section-header"><h2 className="section-title">¿Cómo funciona?</h2></div>
+          <div className="steps-grid">
+            {[
+              { n:"01", title:"Crea tu perfil", desc:"Registra tu información académica, habilidades y experiencia en minutos." },
+              { n:"02", title:"Encuentra oportunidades", desc:"Explora cientos de vacantes filtradas por modalidad, tipo y ciudad." },
+              { n:"03", title:"Aplica y crece", desc:"Envía tu aplicación con un clic y haz seguimiento del proceso." },
+            ].map((s, i) => (
+              <div key={i} className="step">
+                <div className="step-num">{s.n}</div>
+                <h3>{s.title}</h3>
+                <p>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA BANNER */}
+      <section className="section" style={{background:"var(--blue-pale)"}}>
+        <div className="section-inner" style={{textAlign:"center"}}>
+          <h2 className="section-title" style={{marginBottom:10}}>¿Listo para dar el primer paso?</h2>
+          <p style={{color:"var(--text2)",marginBottom:24}}>Únete a miles de estudiantes colombianos que ya encontraron su primera oportunidad.</p>
+          <button className="btn-primary" style={{padding:"12px 32px",fontSize:15}} onClick={() => setPage("opportunities")}>
+            Explorar oportunidades →
+          </button>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function OpportunitiesPage({ setPage, setSelectedOpp }) {
+  const [search, setSearch] = useState("");
+  const [types, setTypes] = useState([]);
+  const [modes, setModes] = useState([]);
+  const [sort, setSort] = useState("recent");
+
+  const toggleFilter = (list, setList, val) => {
+    setList(prev => prev.includes(val) ? prev.filter(v => v !== val) : [...prev, val]);
+  };
+
+  const allFilters = [...types.map(t => ({label:t,remove:()=>toggleFilter(types,setTypes,t)})), ...modes.map(m => ({label:m,remove:()=>toggleFilter(modes,setModes,m)}))];
+
+  const filtered = OPPORTUNITIES
+    .filter(o => {
+      const q = search.toLowerCase();
+      if (q && !o.title.toLowerCase().includes(q) && !o.company.toLowerCase().includes(q) && !o.location.toLowerCase().includes(q)) return false;
+      if (types.length && !types.includes(o.type)) return false;
+      if (modes.length && !modes.includes(o.mode)) return false;
+      return true;
+    })
+    .sort((a,b) => sort === "recent" ? new Date(b.posted) - new Date(a.posted) : new Date(a.deadline) - new Date(b.deadline));
+
+  return (
+    <div className="page">
+      <div className="page-header">
+        <h1 className="page-title">Oportunidades laborales</h1>
+        <p className="page-subtitle">{filtered.length} oportunidades disponibles para ti</p>
+      </div>
+      <div className="opps-layout">
+        {/* SIDEBAR */}
+        <aside className="sidebar">
+          <div className="sidebar-title">Filtros</div>
+          <div className="filter-group">
+            <div className="filter-label">Tipo</div>
+            {TYPES.map(t => (
+              <label key={t} className={`checkbox-item${types.includes(t)?" active":""}`}>
+                <input type="checkbox" checked={types.includes(t)} onChange={() => toggleFilter(types, setTypes, t)} />
+                <span style={{fontSize:14,cursor:"pointer",color:types.includes(t)?"var(--blue)":"var(--text2)"}}>{t}</span>
+              </label>
+            ))}
+          </div>
+          <div className="filter-group">
+            <div className="filter-label">Modalidad</div>
+            {MODES.map(m => (
+              <label key={m} className={`checkbox-item${modes.includes(m)?" active":""}`}>
+                <input type="checkbox" checked={modes.includes(m)} onChange={() => toggleFilter(modes, setModes, m)} />
+                <span style={{fontSize:14,cursor:"pointer",color:modes.includes(m)?"var(--blue)":"var(--text2)"}}>{m}</span>
+              </label>
+            ))}
+          </div>
+          {allFilters.length > 0 && (
+            <button className="clear-all" onClick={() => { setTypes([]); setModes([]); }}>Limpiar todos los filtros</button>
+          )}
+        </aside>
+
+        {/* MAIN */}
+        <div className="opps-main">
+          <div className="opps-toolbar">
+            <div className="opps-search">
+              <div className="input-wrapper">
+                <Icon name="search" size={16} />
+                <input className="input-search" placeholder="Buscar por cargo o empresa..." value={search} onChange={e => setSearch(e.target.value)} />
+              </div>
+            </div>
+            <select className="select-sort" value={sort} onChange={e => setSort(e.target.value)}>
+              <option value="recent">Más recientes</option>
+              <option value="deadline">Próximos a vencer</option>
+            </select>
+          </div>
+
+          {allFilters.length > 0 && (
+            <div className="active-filters">
+              <Icon name="filter" size={14} style={{color:"var(--text3)"}} />
+              {allFilters.map((f,i) => (
+                <span key={i} className="active-filter">
+                  {f.label}
+                  <button onClick={f.remove}><Icon name="x" size={12} /></button>
+                </span>
+              ))}
+              <button className="clear-all" onClick={() => { setTypes([]); setModes([]); }}>Limpiar</button>
+            </div>
+          )}
+
+          {filtered.length === 0 ? (
+            <div className="no-results">
+              <div className="no-results-icon">🔍</div>
+              <p style={{fontWeight:600,fontSize:16,marginBottom:6}}>No encontramos resultados</p>
+              <p style={{fontSize:14}}>Intenta con otros filtros o palabras clave</p>
+            </div>
+          ) : (
+            <div className="opp-list">
+              {filtered.map(opp => {
+                const dl = daysLeft(opp.deadline);
+                return (
+                  <div key={opp.id} className="opp-list-card" onClick={() => { setSelectedOpp(opp); setPage("detail"); }}>
+                    <div className="company-logo" style={{background:opp.color,width:48,height:48,borderRadius:12,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"Syne, sans-serif",fontWeight:800,fontSize:14,color:"#fff"}}>{opp.logo}</div>
+                    <div className="opp-list-body">
+                      <div className="opp-list-title">{opp.title}</div>
+                      <div className="opp-list-company">
+                        <Icon name="building" size={13} />{opp.company}
+                        <span style={{color:"var(--text3)"}}>·</span>
+                        <Icon name="map" size={13} />{opp.location}
+                      </div>
+                      <div className="card-badges" style={{marginBottom:8}}>
+                        <span className={`badge ${TYPE_BADGE[opp.type]}`}>{opp.type}</span>
+                        <span className={`badge ${MODE_BADGE[opp.mode]}`}>{opp.mode}</span>
+                      </div>
+                      <div className="opp-list-footer">
+                        <div style={{display:"flex",gap:16,flexWrap:"wrap",alignItems:"center"}}>
+                          <span style={{fontFamily:"Syne, sans-serif",fontSize:15,fontWeight:700,color:"var(--green)"}}>{opp.salary}<span style={{fontSize:11,fontWeight:400,color:"var(--text3)"}}>/mes</span></span>
+                          <span style={{fontSize:13,color:dl < 10 ? "var(--red)" : "var(--text3)",display:"flex",alignItems:"center",gap:4}}>
+                            <Icon name="clock" size={13} />{dl < 0 ? "Vencido" : dl === 0 ? "Vence hoy" : `${dl} días restantes`}
+                          </span>
+                        </div>
+                        <button className="btn-sm" onClick={e => { e.stopPropagation(); setSelectedOpp(opp); setPage("detail"); }}>Ver detalles →</button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailPage({ opp, setPage, showToast, applications, setApplications, savedIds, toggleSave }) {
+  const [applied, setApplied] = useState(applications.some(a => a.id === opp?.id));
+  const [modal, setModal] = useState(false);
+
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setModal(false);
+    };
+    if (modal) window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [modal]);
+  if (!opp) { setPage("opportunities"); return null; }
+  const dl = daysLeft(opp.deadline);
+
+  const handleApply = () => {
+    if (applied) return;
+    setApplications(prev => [...prev, { ...opp, status: "pending", appliedDate: new Date().toISOString(), step: 0 }]);
+    setApplied(true);
+    setModal(false);
+    showToast(`¡Aplicaste a ${opp.title} en ${opp.company}!`);
+  };
+
+  return (
+    <div className="page">
+      <div style={{marginBottom:16}}>
+        <button onClick={() => setPage("opportunities")} style={{background:"none",border:"none",cursor:"pointer",color:"var(--blue)",fontWeight:600,fontSize:14,display:"flex",alignItems:"center",gap:6}}>
+          ← Volver a oportunidades
+        </button>
+      </div>
+      <div className="detail-layout">
+        <div className="detail-main">
+          <div className="detail-header">
+            <div className="detail-logo" style={{background:opp.color}}>{opp.logo}</div>
+            <div>
+        <h1 className="detail-title">{opp.title}</h1>
+              <div className="detail-company">{opp.company}</div>
+              <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
+                <span className={`badge ${TYPE_BADGE[opp.type]}`}>{opp.type}</span>
+                <span className={`badge ${MODE_BADGE[opp.mode]}`}>{opp.mode}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="detail-meta-grid">
+            <div className="detail-meta-item"><label>Ubicación</label><p>{opp.location}</p></div>
+            <div className="detail-meta-item"><label>Salario</label><p style={{color:"var(--green)"}}>{opp.salary}/mes</p></div>
+            <div className="detail-meta-item"><label>Fecha límite</label><p>{formatDate(opp.deadline)}</p></div>
+            <div className="detail-meta-item"><label>Categoría</label><p>{opp.category}</p></div>
+          </div>
+
+          <div className="detail-section">
+            <h3>Descripción del puesto</h3>
+            <p>{opp.description}</p>
+          </div>
+
+          <div className="detail-section">
+            <h3>Habilidades requeridas</h3>
+            <div className="req-list">
+              {opp.requirements.map(r => <span key={r} className="req-tag">{r}</span>)}
+            </div>
+          </div>
+
+          <div className="detail-section">
+            <h3>Sobre {opp.company}</h3>
+            <p>Una de las empresas líderes en su sector en Colombia, comprometida con el desarrollo del talento joven y la innovación. Ofrecemos un ambiente dinámico, mentoría de clase mundial y la oportunidad de impactar millones de personas.</p>
+          </div>
+        </div>
+
+        <div className="detail-sidebar">
+          <div style={{marginBottom:16}}>
+            <div style={{fontSize:22,fontFamily:"Syne, sans-serif",fontWeight:800,color:"var(--green)",marginBottom:2}}>{opp.salary}<span style={{fontSize:13,fontWeight:400,color:"var(--text3)"}}>/mes</span></div>
+            <div style={{fontSize:13,color:"var(--text3)"}}>{opp.type} · {opp.mode}</div>
+          </div>
+          <button className="btn-apply" onClick={() => applied ? null : setModal(true)} disabled={applied} style={applied ? {opacity:.7,cursor:"default"} : {}}>
+            {applied ? "✓ Aplicación enviada" : "Aplicar ahora"}
+          </button>
+          <button
+            className="btn-save"
+            onClick={() => toggleSave(opp)}
+            aria-pressed={savedIds && savedIds.has(opp?.id)}
+            style={savedIds && savedIds.has(opp?.id) ? { background: "var(--blue-pale)", color: "var(--blue)" } : {}}
+          >
+            {savedIds && savedIds.has(opp?.id) ? "✓ Guardada" : "Guardar oportunidad"}
+          </button>
+          {dl > 0 && dl <= 7 && (
+            <div className="deadline-warning"><Icon name="clock" size={14} />Quedan solo {dl} días</div>
+          )}
+          <div style={{marginTop:20,paddingTop:16,borderTop:"1px solid var(--border)"}}>
+            <div style={{fontSize:12,color:"var(--text3)",fontWeight:700,textTransform:"uppercase",letterSpacing:".05em",marginBottom:10}}>Detalles rápidos</div>
+            {[["Publicado",formatDate(opp.posted)],["Modalidad",opp.mode],["Tipo",opp.type]].map(([k,v]) => (
+              <div key={k} style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:8}}>
+                <span style={{color:"var(--text3)"}}>{k}</span>
+                <span style={{fontWeight:600}}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {modal && (
+        <div className="modal-overlay" role="dialog" aria-modal="true" onClick={() => setModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h2>Confirmar aplicación</h2>
+            <p>¿Deseas enviar tu aplicación para <strong>{opp.title}</strong> en <strong>{opp.company}</strong>? Se compartirá tu perfil y CV.</p>
+            <div className="modal-actions">
+              <button className="btn-outline" onClick={() => setModal(false)}>Cancelar</button>
+              <button className="btn-primary" onClick={handleApply}>Confirmar y aplicar</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProfilePage() {
+  return (
+    <div className="page" style={{maxWidth:760}}>
+      <div className="profile-header">
+        <div className="avatar">JG</div>
+        <div>
+          <div className="profile-name">Miguel Rodríguez</div>
+          <div className="profile-sub">Ingeniería de Sistemas · Universidad de los Andes</div>
+          <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
+            <span className="badge badge-cyan">7.° semestre</span>
+            <span className="badge badge-green">Disponible</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="card-section">
+        <h3><Icon name="briefcase" size={16} />Información académica</h3>
+        <div className="info-grid">
+          {[["Carrera","Ingeniería de Sistemas"],["Universidad","Universidad de los Andes"],["Ciudad","Bogotá, Colombia"],["Semestre","7.° semestre"],["Promedio acumulado","4.2 / 5.0"],["Fecha de grado","Dic. 2026"]].map(([k,v]) => (
+            <div key={k} className="info-field">
+              <label>{k}</label><p>{v}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="card-section">
+        <h3><Icon name="zap" size={16} />Habilidades técnicas</h3>
+        <div className="skill-tags">
+          {["React","TypeScript","Node.js","Python","SQL","Git","Docker","AWS","Figma","Scrum"].map(s => (
+            <span key={s} className="skill-tag">{s}</span>
+          ))}
+        </div>
+      </div>
+
+      <div className="card-section">
+        <h3><Icon name="trending" size={16} />Experiencia</h3>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          {[
+            {role:"Desarrollador Frontend Freelance",place:"Varios clientes",period:"Ene 2024 – Presente",desc:"Desarrollo de aplicaciones web para startups colombianas."},
+            {role:"Monitor de Programación",place:"Universidad de los Andes",period:"Ago 2023 – Dic 2023",desc:"Apoyo académico a estudiantes de primer semestre en cursos de programación."},
+          ].map((e,i) => (
+            <div key={i} style={{paddingLeft:14,borderLeft:"3px solid var(--blue)"}}>
+              <div style={{fontWeight:700,fontSize:15}}>{e.role}</div>
+              <div style={{fontSize:13,color:"var(--blue)",marginBottom:4}}>{e.place} · {e.period}</div>
+              <div style={{fontSize:13,color:"var(--text2)"}}>{e.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="card-section">
+        <h3><Icon name="file" size={16} />CV / Hoja de vida</h3>
+        <div style={{display:"flex",alignItems:"center",gap:14,padding:"14px",background:"var(--bg3)",borderRadius:"var(--radius-sm)",border:"1px solid var(--border)"}}>
+          <Icon name="file" size={32} style={{color:"var(--blue)"}} />
+          <div style={{flex:1}}><div style={{fontWeight:600,fontSize:14}}>CV_MiguelRodriguez_2025.pdf</div><div style={{fontSize:12,color:"var(--text3)"}}>Actualizado hace 3 días</div></div>
+          <button className="btn-sm">Actualizar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ApplicationsPage({ applications, setPage, setSelectedOpp }) {
+  const STATUS_LABELS = { pending: "Enviada", review: "En revisión", interview: "Entrevista", rejected: "No seleccionado" };
+  const STATUS_STEPS = { pending: 1, review: 2, interview: 3, rejected: 0 };
+  const STEPS_TOTAL = 3;
+
+  if (applications.length === 0) return (
+    <div className="page" style={{textAlign:"center",padding:"80px 24px"}}>
+      <div style={{fontSize:56,marginBottom:16}}>📋</div>
+      <h2 style={{marginBottom:8}}>No tienes aplicaciones aún</h2>
+      <p style={{color:"var(--text2)",marginBottom:24}}>Explora las oportunidades disponibles y empieza a aplicar.</p>
+      <button className="btn-primary" onClick={() => setPage("opportunities")}>Ver oportunidades</button>
+    </div>
+  );
+
+  return (
+    <div className="page" style={{maxWidth:760}}>
+      <div className="page-header">
+        <h1 className="page-title">Mis Aplicaciones</h1>
+        <p className="page-subtitle">{applications.length} aplicaciones enviadas</p>
+      </div>
+      {applications.map((app, i) => {
+        const steps = STATUS_STEPS[app.status] || 1;
+        return (
+          <div key={i} className="app-card">
+            <div className="company-logo" style={{background:app.color,width:48,height:48,borderRadius:12,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"Syne, sans-serif",fontWeight:800,fontSize:14,color:"#fff"}}>{app.logo}</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,flexWrap:"wrap",marginBottom:4}}>
+                <div>
+                  <div style={{fontFamily:"Syne, sans-serif",fontWeight:700,fontSize:16}}>{app.title}</div>
+                  <div style={{fontSize:13,color:"var(--text2)",marginTop:2}}>{app.company} · {app.location}</div>
+                </div>
+                <span className={`app-status status-${app.status}`}>{STATUS_LABELS[app.status]}</span>
+              </div>
+              <div style={{fontSize:12,color:"var(--text3)",marginBottom:10}}>Aplicado el {formatDate(app.appliedDate || new Date())}</div>
+              {app.status !== "rejected" && (
+                <>
+                  <div style={{display:"flex",gap:4,marginBottom:4}}>
+                    {["Aplicada","En revisión","Entrevista"].map((s,idx) => (
+                      <div key={s} style={{flex:1,height:5,borderRadius:999,background:idx < steps ? "var(--blue)" : idx === steps-1 ? "var(--accent)" : "var(--border)",transition:"background .3s"}} />
+                    ))}
+                  </div>
+                  <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:"var(--text3)"}}>
+                    {["Aplicada","En revisión","Entrevista"].map(s => <span key={s}>{s}</span>)}
+                  </div>
+                </>
+              )}
+              <div style={{marginTop:12}}>
+                <button className="btn-sm" onClick={() => { setSelectedOpp(app); setPage("detail"); }}>Ver oferta</button>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── APP ─────────────────────────────────────────────────────────────────────
+function ConectaEstudia() {
+  const [page, setPage] = useState("home");
+  const [dark, setDark] = useState(false);
+  const [selectedOpp, setSelectedOpp] = useState(null);
+  const [toastMsg, setToastMsg] = useState(null);
+  const [savedIds, setSavedIds] = useState(() => new Set());
+
+  const toggleSave = (opp) => {
+    if (!opp) return;
+    setSavedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(opp.id)) next.delete(opp.id);
+      else next.add(opp.id);
+      return next;
+    });
+  };
+  const [applications, setApplications] = useState([
+    { ...OPPORTUNITIES[2], status: "review", appliedDate: "2025-05-10" },
+    { ...OPPORTUNITIES[5], status: "pending", appliedDate: "2025-05-20" },
+  ]);
+
+  const showToast = useCallback((msg) => setToastMsg(msg), []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+  }, [dark]);
+
+  return (
+    <>
+      <style>{globalStyles}</style>
+      <div className="app">
+        <Navbar page={page} setPage={setPage} dark={dark} setDark={setDark} />
+        <main className="main">
+          {page === "home" && <HomePage setPage={setPage} setSelectedOpp={setSelectedOpp} toast={showToast} />}
+          {page === "opportunities" && <OpportunitiesPage setPage={setPage} setSelectedOpp={setSelectedOpp} />}
+          {page === "detail" && (
+            <DetailPage
+              opp={selectedOpp}
+              setPage={setPage}
+              showToast={showToast}
+              applications={applications}
+              setApplications={setApplications}
+              savedIds={savedIds}
+              toggleSave={toggleSave}
+            />
+          )}
+          {page === "profile" && <ProfilePage />}
+          {page === "applications" && <ApplicationsPage applications={applications} setPage={setPage} setSelectedOpp={setSelectedOpp} />}
+        </main>
+        <BottomNav page={page} setPage={setPage} />
+        {toastMsg && <Toast msg={toastMsg} onClose={() => setToastMsg(null)} />}
+      </div>
+    </>
+  );
+}
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<ConectaEstudia />);
+  </script>
+</body>
+</html>
